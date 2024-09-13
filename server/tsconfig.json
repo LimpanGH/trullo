@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "target": "ES6",                        // The target JavaScript version (ES6 is a good default for Node.js)
+      "module": "ES2015",                   // Node.js uses CommonJS module resolution
+      "outDir": "../dist",                     // Output directory for compiled files
+      "rootDir": "./src",                     // Root directory of your source files
+      "strict": true,                         // Enable strict type-checking options
+      "esModuleInterop": true,                // Allows default imports from CommonJS modules
+      "skipLibCheck": true,                   // Skip type checking of declaration files for faster build times
+      "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+      "resolveJsonModule": true,              // Allows importing JSON modules
+      "moduleResolution": "node",             // Use Node.js-style module resolution
+      "types": ["node"],                      // Include type definitions for Node.js
+      "allowSyntheticDefaultImports": true,   // Allow default imports from modules with no default export
+      "noImplicitAny": true,                  // Prevents using `any` type implicitly
+      "noUnusedLocals": true,                 // Report errors on unused local variables
+      "noUnusedParameters": true              // Report errors on unused function parameters
+    },
+    "include": ["src/**/*.ts"],                // Include all .ts files in the `src` folder
+    "exclude": ["node_modules", "dist"]        // Exclude node_modules and output folder
+  }
+  
