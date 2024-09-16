@@ -1,13 +1,6 @@
-import {
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLID,
-} from 'graphql';
+import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
 
-import { UserModel } from '../models/userModels';
+import UserModel from '../models/userModels';
 
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -30,7 +23,7 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
-      resolve(parent, args) {
+      resolve(args) {
         return UserModel.findById(args.id);
       },
     },
@@ -51,7 +44,7 @@ const Mutation = new GraphQLObjectType({
       args: {
         name: { type: GraphQLString },
         email: { type: GraphQLString },
-        pasword: { type: GraphQLString },
+        password: { type: GraphQLString },
       },
       resolve(parent, args) {
         const user = new UserModel({

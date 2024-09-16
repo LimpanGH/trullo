@@ -51,3 +51,12 @@ Följande urval är exempel på vidareutveckling. Egna förslag på vidareutveck
 
 - Kodinlämning i Canvas med länk till repository (t.ex. GitHub)
 - Inlämning senast **söndagen den 29e september kl. 23:59**
+
+
+
+## Notes
+- Development (npm run dev): Runs your src/index.ts file using tsx in watch mode. It automatically recompiles your code on changes and restarts the server.
+
+- Build (npm run build): Runs npx tsc, which compiles your TypeScript files into JavaScript. By default, the compiled files go into the dist folder (or whichever folder is specified in tsconfig.json).
+
+- Start (npm run start): After running the build command, the compiled code in dist/index.js can be executed using Node.js. s
