@@ -1,15 +1,15 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import {TaskModel} from '../models/taskModels';
+import { TaskModel } from '../models/taskModels';
 // import { title } from 'process';
 
-const TaskType = new GraphQLObjectType({
+export const TaskType = new GraphQLObjectType({
   name: 'Task',
   fields: () => ({
     id: { type: GraphQLID },
     title: { type: GraphQLString },
     description: { type: GraphQLString },
     status: { type: GraphQLString },
-    assignedTo: { type: GraphQLString },
+    assignedTo: { type: GraphQLID },
     createdAt: { type: GraphQLString },
     finishedBy: { type: GraphQLString },
   }),
@@ -35,8 +35,11 @@ const RootQuery = new GraphQLObjectType({
     },
     tasks: {
       type: new GraphQLList(TaskType),
-      resolve() {
-        return TaskModel.find({});
+      args: {
+        assignedTo: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        return TaskModel.find(args.assignedTo ? { assignedTo: args.assignedTo } : {});
       },
     },
   },
@@ -51,7 +54,7 @@ const Mutation = new GraphQLObjectType({
         title: { type: GraphQLString },
         description: { type: GraphQLString },
         status: { type: GraphQLString },
-        assignedTo: { type: GraphQLString },
+        assignedTo: { type: GraphQLID },
       },
       resolve(parent, args) {
         const task = new TaskModel({

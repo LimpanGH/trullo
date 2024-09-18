@@ -16,7 +16,7 @@ const TaskSchema = new mongoose.Schema({
   title: String,
   description: String,
   status: String,
-  assignedTo: String,
+  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: Date,
   finishedBy: Date, //datum eller en kopplat till en person?
 });
