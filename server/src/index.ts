@@ -2,7 +2,9 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { graphqlHTTP } from 'express-graphql';
-import { schema } from './db/schemas/userSchema';
+import { schemaUser } from './db/schemas/userSchema';
+import { schemaTask } from './db/schemas/taskSchema';
+import { mergeSchemas, makeExecutableSchema } from '@graphql-tools/schema';
 
 dotenv.config();
 const app = express();
@@ -29,6 +31,10 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('disconnected', () => {
   console.log('Mongoose is disconnected');
+});
+
+const schema = mergeSchemas({
+  schemas: [schemaUser, schemaTask],
 });
 
 app.use(

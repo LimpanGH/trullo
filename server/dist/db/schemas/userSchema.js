@@ -1,5 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import UserModel from '../models/userModels';
+import UserModel from '../models/userModels.js';
+import bcrypt from 'bcrypt';
 const UserType = new GraphQLObjectType({
     name: 'User',
     fields: () => ({
@@ -42,18 +43,20 @@ const Mutation = new GraphQLObjectType({
                 email: { type: GraphQLString },
                 password: { type: GraphQLString },
             },
-            resolve(parent, args) {
+            async resolve(parent, args) {
+                const saltRounds = 10;
+                const hashedPassword = await bcrypt.hash(args.password, saltRounds);
                 const user = new UserModel({
                     name: args.name,
                     email: args.email,
-                    password: args.password,
+                    password: hashedPassword,
                 });
                 return user.save();
             },
         },
     },
 });
-export const schema = new GraphQLSchema({
+export const schemaUser = new GraphQLSchema({
     query: RootQuery,
     mutation: Mutation,
 });
