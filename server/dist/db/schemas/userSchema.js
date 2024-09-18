@@ -1,5 +1,5 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import UserModel from '../models/userModels.js';
+import { UserModel, TaskModel } from '../models/userModels.js';
 import bcrypt from 'bcrypt';
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -8,6 +8,18 @@ const UserType = new GraphQLObjectType({
         name: { type: GraphQLString },
         email: { type: GraphQLString },
         password: { type: GraphQLString },
+    }),
+});
+const TaskType = new GraphQLObjectType({
+    name: 'Task',
+    fields: () => ({
+        id: { type: GraphQLID },
+        title: { type: GraphQLString },
+        description: { type: GraphQLString },
+        status: { type: GraphQLString },
+        assignedTo: { type: GraphQLString },
+        createdAt: { type: GraphQLString },
+        finishedBy: { type: GraphQLString },
     }),
 });
 const RootQuery = new GraphQLObjectType({
@@ -29,6 +41,15 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(UserType),
             resolve() {
                 return UserModel.find({});
+            },
+        },
+        task: {
+            type: TaskType,
+            args: {
+                id: { type: GraphQLID },
+            },
+            resolve(args) {
+                return TaskModel.findById(args.id);
             },
         },
     },
