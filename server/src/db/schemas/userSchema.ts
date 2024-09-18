@@ -1,10 +1,8 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
 
 import { UserModel, TaskModel } from '../models/userModels';
-import {TaskType} from './taskSchema'
+import { TaskType } from './taskSchema';
 import bcrypt from 'bcrypt';
-
-
 
 const UserType = new GraphQLObjectType({
   name: 'User',
@@ -75,6 +73,16 @@ const Mutation = new GraphQLObjectType({
           password: hashedPassword,
         });
         return user.save();
+      },
+    },
+    deleteUser: {
+      type: UserType,
+      args: {
+        id: { type: GraphQLID },
+      },
+      async resolve(parent, args) {
+        const deletedUser = await UserModel.findByIdAndDelete(args.id);
+        return deletedUser;
       },
     },
   },

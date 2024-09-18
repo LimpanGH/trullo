@@ -71,6 +71,16 @@ const Mutation = new GraphQLObjectType({
                 return user.save();
             },
         },
+        deleteUser: {
+            type: UserType,
+            args: {
+                id: { type: GraphQLID },
+            },
+            async resolve(parent, args) {
+                const deletedUser = await UserModel.findByIdAndDelete(args.id);
+                return deletedUser;
+            },
+        },
     },
 });
 export const schemaUser = new GraphQLSchema({
