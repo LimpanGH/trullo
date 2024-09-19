@@ -1,31 +1,18 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import { connectToDB } from './db/dbConnect.js';
 import { graphqlHTTP } from 'express-graphql';
 import { schemaUser } from './db/schemas/userSchema.js';
 import { schemaTask } from './db/schemas/taskSchema.js';
 import { mergeSchemas } from '@graphql-tools/schema';
 dotenv.config();
-const app = express();
 const mongodbUri = process.env.MONGODB_URI;
 const port = process.env.PORT;
+const app = express();
 if (!mongodbUri) {
     throw new Error('MONGODB_URI is not defined in the environment variables.');
 }
-console.log('Connecting to MongoDB URI:', mongodbUri);
-mongoose
-    .connect(mongodbUri || '', {})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.log('MongoDB connection error', err));
-mongoose.connection.on('connected', () => {
-    console.log('Mongoose is connected to', mongodbUri);
-});
-mongoose.connection.on('error', (err) => {
-    console.log('Mongoose connection error', err);
-});
-mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose is disconnected');
-});
+connectToDB(mongodbUri);
 const schema = mergeSchemas({
     schemas: [schemaUser, schemaTask],
 });

@@ -1,10 +1,9 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-
 import { UserModel, TaskModel } from '../models/userModels';
 import { TaskType } from './taskSchema';
-import bcrypt from 'bcrypt';
+import userResolvers from '../controllers/userResolvers';
 
-const UserType = new GraphQLObjectType({
+export const UserType = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
     id: { type: GraphQLID },
@@ -13,15 +12,12 @@ const UserType = new GraphQLObjectType({
     password: { type: GraphQLString },
     tasks: {
       type: new GraphQLList(TaskType),
-      resolve(parent, args) {
-        return TaskModel.find({ assignedTo: parent.id });
-        // return TaskModel.find({ assignedTo: args.assignedTo });
-      },
+      resolve: userResolvers.User.tasks,
     },
   }),
 });
 
-const RootQuery = new GraphQLObjectType({
+export const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     user: {
@@ -32,24 +28,18 @@ const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
-      resolve(args) {
-        return UserModel.findById(args.id);
-      },
+      resolve: userResolvers.Query.user,
     },
     users: {
       type: new GraphQLList(UserType),
-      resolve() {
-        return UserModel.find({});
-      },
+      resolve: userResolvers.Query.users,
     },
     task: {
       type: TaskType,
       args: {
         id: { type: GraphQLID },
       },
-      resolve(args) {
-        return TaskModel.findById(args.id);
-      },
+      resolve: userResolvers.Query.task,
     },
   },
 });
@@ -64,26 +54,14 @@ const Mutation = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
-      async resolve(parent, args) {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(args.password, saltRounds);
-        const user = new UserModel({
-          name: args.name,
-          email: args.email,
-          password: hashedPassword,
-        });
-        return user.save();
-      },
+      resolve: userResolvers.Mutation.addUser,
     },
     deleteUser: {
       type: UserType,
       args: {
         id: { type: GraphQLID },
       },
-      async resolve(parent, args) {
-        const deletedUser = await UserModel.findByIdAndDelete(args.id);
-        return deletedUser;
-      },
+      resolve: userResolvers.Mutation.deleteUser,
     },
   },
 });
