@@ -1,4 +1,5 @@
-// import { UserModel } from '../models/userModels';
+// Business logic for user queries and mutations
+
 import { TaskModel } from '../models/taskModels';
 
 interface TaskArgs {

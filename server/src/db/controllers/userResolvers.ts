@@ -1,3 +1,5 @@
+// Business logic for user queries and mutations
+
 import { UserModel } from '../models/userModels';
 import { TaskModel } from '../models/taskModels';
 import bcrypt from 'bcrypt';

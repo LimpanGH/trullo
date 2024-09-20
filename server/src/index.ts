@@ -4,11 +4,17 @@ import { connectToDB } from './db/dbConnect';
 import { graphqlHTTP } from 'express-graphql';
 import { schemaUser } from './db/schemas/userSchema';
 import { schemaTask } from './db/schemas/taskSchema';
+
+import { userPermissions } from './db/permissions/userPermissions';
+import { taskPermissions } from './db/permissions/taskPermissions';
+
 import { mergeSchemas, makeExecutableSchema } from '@graphql-tools/schema';
+import { applyMiddleware } from 'graphql-middleware';
+import { context } from './db/permissions/context';
 
 dotenv.config();
 const mongodbUri = process.env.MONGODB_URI;
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 
 const app = express();
 
@@ -16,19 +22,27 @@ if (!mongodbUri) {
   throw new Error('MONGODB_URI is not defined in the environment variables.');
 }
 
-connectToDB(mongodbUri);
-
-const schema = mergeSchemas({
+const mergedSchema = mergeSchemas({
   schemas: [schemaUser, schemaTask],
 });
+console.log(mergedSchema.getQueryType());
+
+const schemaWithPermissions = applyMiddleware(mergedSchema, userPermissions, taskPermissions);
+
+try {
+  connectToDB(mongodbUri);
+} catch (error) {
+  console.error('Failed connecting to the database: ', error);
+}
 
 app.use(
   '/graphql',
   graphqlHTTP({
-    schema: schema,
+    schema: schemaWithPermissions,
     graphiql: true,
+    context: context,
   })
 );
-app.listen(4000, () => {
+app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });

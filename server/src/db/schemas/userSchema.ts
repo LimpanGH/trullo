@@ -1,5 +1,4 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import { UserModel, TaskModel } from '../models/userModels';
 import { TaskType } from './taskSchema';
 import userResolvers from '../controllers/userResolvers';
 

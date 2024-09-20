@@ -13,7 +13,7 @@ const TaskSchema = new mongoose.Schema({
     status: String,
     assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     createdAt: Date,
-    finishedBy: Date, //datum eller en kopplat till en person?
+    finishedBy: Date,
 });
 const TaskModel = mongoose.model('Task', TaskSchema);
 export { TaskSchema, TaskModel };

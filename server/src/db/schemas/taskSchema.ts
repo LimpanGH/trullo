@@ -1,7 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
 import { TaskModel } from '../models/taskModels';
 import { taskResolvers } from '../controllers/taskResolvers';
-// import { title } from 'process';
 
 export const TaskType = new GraphQLObjectType({
   name: 'Task',
@@ -20,15 +19,10 @@ const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     task: {
+      // type: new GraphQLList(TaskType),
       type: TaskType,
       args: {
-        // id: { type: GraphQLID },
-        // title: { type: GraphQLString },
-        // description: { type: GraphQLString },
-        // status: { type: GraphQLString },
-        // assignedTo: { type: GraphQLString },
-        // createdAt: { type: GraphQLString },
-        // finishedBy: { type: GraphQLString },
+        id: { type: GraphQLID },
       },
       resolve: taskResolvers.Query.task,
     },
@@ -44,7 +38,7 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
- const Mutation = new GraphQLObjectType({
+const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     addTask: {
@@ -63,7 +57,7 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID },
       },
       resolve: taskResolvers.Mutation.deleteTask,
-    }
+    },
   },
 });
 
