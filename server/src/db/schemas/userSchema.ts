@@ -8,12 +8,21 @@ export const UserType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     email: { type: GraphQLString },
-    password: { type: GraphQLString },
+    token: { type: GraphQLString },
+    // password: { type: GraphQLString }, Remove password from the schema for security reasons?
     tasks: {
       type: new GraphQLList(TaskType),
       resolve: userResolvers.User.tasks,
     },
   }),
+});
+
+const LoginPayloadType = new GraphQLObjectType({
+  name: 'LoginPayload',
+  fields: {
+    token: { type: GraphQLString },
+    user: { type: UserType },
+  },
 });
 
 export const RootQuery = new GraphQLObjectType({
@@ -26,6 +35,7 @@ export const RootQuery = new GraphQLObjectType({
         name: { type: GraphQLString },
         email: { type: GraphQLString },
         password: { type: GraphQLString },
+        token: { type: GraphQLString },
       },
       resolve: userResolvers.Query.user,
     },
@@ -46,12 +56,28 @@ export const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
+    login: {
+      type: LoginPayloadType,
+      // type: new GraphQLObjectType({
+        // name: 'LoginPayload',
+        // fields: {
+        //   token: { type: GraphQLString },
+        //   user: { type: UserType },
+        // },
+      // }),
+      args: {
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve: userResolvers.Mutation.login,
+    },
     addUser: {
       type: UserType,
       args: {
         name: { type: GraphQLString },
         email: { type: GraphQLString },
         password: { type: GraphQLString },
+        token: { type: GraphQLString },
       },
       resolve: userResolvers.Mutation.addUser,
     },

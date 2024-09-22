@@ -27,6 +27,6 @@ export const userPermissions = shield({
   },
   Mutation: {
     addUser: isEmailValid,
-    deleteUser: isAuthenticated,
+    deleteUser: isAuthenticated
   },
 });

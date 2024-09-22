@@ -3,7 +3,12 @@
 import { UserModel } from '../models/userModels';
 import { TaskModel } from '../models/taskModels';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+interface LoginArgs {
+  email: string;
+  password: string;
+}
 interface UserArgs {
   id?: string;
 }
@@ -22,6 +27,8 @@ interface TaskArgs {
 interface UserParent {
   id: string;
 }
+
+const SECRET_KEY = process.env.JWT_SECRET_KEY || 'mysecretkey';
 
 const userResolvers = {
   Query: {
@@ -52,6 +59,32 @@ const userResolvers = {
       });
       return user.save();
     },
+
+    // login: async (_: any, { email, password }: LoginArgs) => {
+    login: async (_: any, args: { [key: string]: any }) => {
+    const { email, password } = args as LoginArgs;
+      
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        throw new Error('Invalid password');
+      }
+
+      const token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, {
+        expiresIn: '1d',
+      });
+      // return { token, user };
+      return { token, user };
+    },
+
+
+
+
+
     deleteUser: async (_: any, args: { [key: string]: any }) => {
       const { id } = args as UserArgs; // Cast args to UserArgs
       const deletedUser = await UserModel.findByIdAndDelete(args.id);
