@@ -20,6 +20,8 @@ const mongodbUri = process.env.MONGODB_URI;
 const port = process.env.PORT || 4000;
 
 const app = express();
+// app.use(express.json());
+
 
 if (!mongodbUri) {
   throw new Error('MONGODB_URI is not defined in the environment variables.');
