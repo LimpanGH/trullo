@@ -28,6 +28,7 @@ app.use(
   graphqlHTTP({
     schema: schema,
     graphiql: true,
+    context: { user: '1' },
   })
 );
 app.listen(4000, () => {
