@@ -34,7 +34,7 @@ export const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
         email: { type: GraphQLString },
-        password: { type: GraphQLString },
+        // password: { type: GraphQLString },
         token: { type: GraphQLString },
       },
       resolve: userResolvers.Query.user,
@@ -59,11 +59,11 @@ const Mutation = new GraphQLObjectType({
     login: {
       type: LoginPayloadType,
       // type: new GraphQLObjectType({
-        // name: 'LoginPayload',
-        // fields: {
-        //   token: { type: GraphQLString },
-        //   user: { type: UserType },
-        // },
+      // name: 'LoginPayload',
+      // fields: {
+      //   token: { type: GraphQLString },
+      //   user: { type: UserType },
+      // },
       // }),
       args: {
         email: { type: GraphQLString },

@@ -50,6 +50,12 @@ const userResolvers = {
   Mutation: {
     addUser: async (_: any, args: { [key: string]: any }) => {
       const { name, email, password } = args as AddUserArgs;
+      
+      const existingUser = await UserModel.findOne({ email  });
+      if (existingUser) {
+        throw new Error('User already exists with this email');
+      } 
+
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(args.password, saltRounds);
       const user = new UserModel({
@@ -62,8 +68,8 @@ const userResolvers = {
 
     // login: async (_: any, { email, password }: LoginArgs) => {
     login: async (_: any, args: { [key: string]: any }) => {
-    const { email, password } = args as LoginArgs;
-      
+      const { email, password } = args as LoginArgs;
+
       const user = await UserModel.findOne({ email });
       if (!user) {
         throw new Error('User not found');
@@ -76,14 +82,11 @@ const userResolvers = {
 
       const token = jwt.sign({ id: user._id, email: user.email }, SECRET_KEY, {
         expiresIn: '1d',
+
       });
       // return { token, user };
       return { token, user };
     },
-
-
-
-
 
     deleteUser: async (_: any, args: { [key: string]: any }) => {
       const { id } = args as UserArgs; // Cast args to UserArgs

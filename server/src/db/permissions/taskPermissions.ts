@@ -1,7 +1,10 @@
 // Validation
 
+console.log(' Nu körs taskPermissions.ts');
+
 import { rule, shield } from 'graphql-shield';
 import { TaskModel } from '../models/taskModels';
+
 
 const isAuthenticated = rule()((parent, args, context) => {
   return context.user ? true : new Error('Not authenticated');

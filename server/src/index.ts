@@ -1,3 +1,4 @@
+console.log(' Nu körs index.ts');
 import express from 'express';
 import * as dotenv from 'dotenv';
 import { connectToDB } from './db/dbConnect';
@@ -11,6 +12,8 @@ import { taskPermissions } from './db/permissions/taskPermissions';
 import { mergeSchemas, makeExecutableSchema } from '@graphql-tools/schema';
 import { applyMiddleware } from 'graphql-middleware';
 import { context } from './db/permissions/context';
+import taskSchemaWithPermissions from './db/permissions/taskSchemaWithPermissions';
+import userSchemaWithPermissions from './db/permissions/userSchemaWithPermissions';
 
 dotenv.config();
 const mongodbUri = process.env.MONGODB_URI;
@@ -23,7 +26,8 @@ if (!mongodbUri) {
 }
 
 const mergedSchema = mergeSchemas({
-  schemas: [schemaUser, schemaTask],
+  schemas: [schemaUser, schemaTask, userSchemaWithPermissions,taskSchemaWithPermissions],
+  
 });
 console.log(mergedSchema.getQueryType());
 
