@@ -4,13 +4,14 @@ import { connectToDB } from './db/dbConnect';
 import { graphqlHTTP } from 'express-graphql';
 import { schemaUser } from './db/schemas/userSchema';
 import { schemaTask } from './db/schemas/taskSchema';
-import { mergeSchemas, makeExecutableSchema } from '@graphql-tools/schema';
+import { mergeSchemas } from '@graphql-tools/schema';
 
 dotenv.config();
 const mongodbUri = process.env.MONGODB_URI;
 const port = process.env.PORT;
 
 const app = express();
+app.use(express.json());
 
 if (!mongodbUri) {
   throw new Error('MONGODB_URI is not defined in the environment variables.');
