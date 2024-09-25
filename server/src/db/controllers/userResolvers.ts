@@ -33,25 +33,32 @@ interface Context {
 
 const userResolvers = {
   Query: {
-    user: (_: any, args: UserArgs, context: Context) => {
+    getUserById: (_: any, args: UserArgs, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
       if (!context.user) {
-        throw new Error('Unauthorized');
+        throw new Error('Unauthorized, please add a valid token in the Authorization header');
       }
+
+      if (!args.id) {
+        throw new Error('User ID is required');
+      }
+
       return UserModel.findById(args.id);
     },
 
-    users: (_: any, args: UserArgs, context: Context) => {
+    getAllUsers: (_: any, args: UserArgs, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
+
       if (!context.user) {
-        throw new Error('Unauthorized');
+        throw new Error('Unauthorized, please add a valid token in the Authorization header');
       }
+
       return UserModel.find({});
     },
 
     task: (_: any, args: TaskArgs, context: Context) => {
       if (!context.user) {
-        throw new Error('Unauthorized');
+        throw new Error('Unauthorized, please add a valid token in the Authorization header');
       }
       return TaskModel.findById(args.id);
     },
@@ -113,7 +120,9 @@ const userResolvers = {
       console.log('Context user:', context.user); // Log the context user
 
       if (!context.user) {
-        throw new Error('Unauthorized to delete user');
+        throw new Error(
+          'Unauthorized to delete user. Please add a valid token in the Authorization header'
+        );
       }
 
       const deletedUser = await UserModel.findByIdAndDelete(args.id);
@@ -126,14 +135,15 @@ const userResolvers = {
       return deletedUser;
     },
 
-    //! I can log deleted users but they are returned as undefined in thunder client 
-    deleteUsers: async (_: any, args: { [key: string]: any }, context: Context) => {
+    deleteMultipleUsers: async (_: any, args: { [key: string]: any }, context: Context) => {
       const { id } = args as UserArgs; // Cast args to UserArgs
 
       console.log('Context user:', context.user); // Log the context user
 
       if (!context.user) {
-        throw new Error('Unauthorized to delete user');
+        throw new Error(
+          'Unauthorized to delete user. Please add a valid token in the Authorization header'
+        );
       }
 
       const deletedUsers = [];

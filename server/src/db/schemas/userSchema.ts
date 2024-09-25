@@ -37,7 +37,7 @@ const LoginType = new GraphQLObjectType({
 export const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
-    user: {
+    getUserById: {
       type: UserType,
       args: {
         id: { type: GraphQLID },
@@ -45,11 +45,11 @@ export const RootQuery = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
-      resolve: userResolvers.Query.user,
+      resolve: userResolvers.Query.getUserById,
     },
-    users: {
+    getAllUsers: {
       type: new GraphQLList(UserType),
-      resolve: userResolvers.Query.users,
+      resolve: userResolvers.Query.getAllUsers,
     },
     task: {
       type: TaskType,
@@ -91,12 +91,12 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: userResolvers.Mutation.deleteUser,
     },
-    deleteUsers: {
+    deleteMultipleUsers: {
       type: new GraphQLList(UserType),
       args: {
         ids: { type: new GraphQLList(GraphQLString) },
       },
-      resolve: userResolvers.Mutation.deleteUsers,
+      resolve: userResolvers.Mutation.deleteMultipleUsers,
     },
   },
 });
