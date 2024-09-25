@@ -1,10 +1,15 @@
+console.log('Reading index.ts');
+
 import express from 'express';
+import { Request, Response, NextFunction } from 'express';
+
 import * as dotenv from 'dotenv';
 import { connectToDB } from './db/dbConnect';
 import { graphqlHTTP } from 'express-graphql';
 import { schemaUser } from './db/schemas/userSchema';
 import { schemaTask } from './db/schemas/taskSchema';
 import { mergeSchemas } from '@graphql-tools/schema';
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 const mongodbUri = process.env.MONGODB_URI;
@@ -25,12 +30,27 @@ const schema = mergeSchemas({
 
 app.use(
   '/graphql',
-  graphqlHTTP({
-    schema: schema,
-    graphiql: true,
-    context: { user: '1' },
+  graphqlHTTP((req, res) => {
+    const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+
+    let decodedToken = null;
+    if (token) {
+      try {
+        decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY || '');
+      } catch (err) {
+        console.log('Invalid or expired token');
+      }
+    }
+
+    return {
+      schema: schema,
+      graphiql: true,
+      // context: { user: decodedToken || null}, // Pass the decoded token to the context
+      context: { user: decodedToken}, // Pass the decoded token to the context
+    };
   })
 );
+
 app.listen(4000, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });

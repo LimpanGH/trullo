@@ -10,6 +10,8 @@
 //   and models with an uppercase name (e.g., UserModel) to differentiate them,
 //   but they are used together to manage your data in MongoDB.
 
+console.log('Reading taskModels.ts');
+
 import mongoose from 'mongoose';
 
 const TaskSchema = new mongoose.Schema({

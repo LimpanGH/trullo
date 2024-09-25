@@ -1,3 +1,5 @@
+console.log('Reading taskSchema.ts');
+
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
 import { TaskModel } from '../models/taskModels';
 import { taskResolvers } from '../controllers/taskResolvers';

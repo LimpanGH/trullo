@@ -1,3 +1,5 @@
+console.log('Reading userSchema.ts');
+
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
 import { UserModel, TaskModel } from '../models/userModels';
 import { TaskType } from './taskSchema';
@@ -17,6 +19,8 @@ export const UserType = new GraphQLObjectType({
   }),
 });
 
+// console.log(UserType.getFields());
+
 const LoginType = new GraphQLObjectType({
   name: 'Login',
   fields: {
@@ -24,6 +28,11 @@ const LoginType = new GraphQLObjectType({
     user: { type: UserType }, // Assuming UserType is already defined
   },
 });
+
+// console.log(LoginType.getFields());
+
+// const fields = LoginType.getFields();
+// console.log(fields.token);
 
 export const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -72,6 +81,7 @@ const Mutation = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
+      
       resolve: userResolvers.Mutation.addUser,
     },
     deleteUser: {
@@ -81,10 +91,20 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: userResolvers.Mutation.deleteUser,
     },
+    deleteUsers: {
+      type: new GraphQLList(UserType),
+      args: {
+        ids: { type: new GraphQLList(GraphQLString) },
+      },
+      resolve: userResolvers.Mutation.deleteUsers,
+    },
   },
 });
+
+// console.log(RootQuery.getFields());
 
 export const schemaUser = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
 });
+
