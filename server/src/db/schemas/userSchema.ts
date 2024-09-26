@@ -25,7 +25,7 @@ const LoginType = new GraphQLObjectType({
   name: 'Login',
   fields: {
     token: { type: GraphQLString },
-    user: { type: UserType }, // Assuming UserType is already defined
+    user: { type: UserType },
   },
 });
 
@@ -51,12 +51,12 @@ export const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(UserType),
       resolve: userResolvers.Query.getAllUsers,
     },
-    task: {
+    getTaskByUserId: {
       type: TaskType,
       args: {
         id: { type: GraphQLID },
       },
-      resolve: userResolvers.Query.task,
+      resolve: userResolvers.Query.getTaskByUserId,
     },
   },
 });
@@ -65,8 +65,6 @@ const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     login: {
-      // type: UserType, 
-      // type: GraphQLString, //! could this fix my problem in graphql-shield?
       type: LoginType,
       args: {
         email: { type: GraphQLString },
@@ -81,7 +79,7 @@ const Mutation = new GraphQLObjectType({
         email: { type: GraphQLString },
         password: { type: GraphQLString },
       },
-      
+
       resolve: userResolvers.Mutation.addUser,
     },
     deleteUser: {
@@ -107,4 +105,3 @@ export const schemaUser = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
 });
-

@@ -21,7 +21,7 @@ export const TaskType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
-    task: {
+    getTaskByTaskId: {
       type: TaskType,
       args: {
         // id: { type: GraphQLID },
@@ -32,7 +32,7 @@ const RootQuery = new GraphQLObjectType({
         // createdAt: { type: GraphQLString },
         // finishedBy: { type: GraphQLString },
       },
-      resolve: taskResolvers.Query.task,
+      resolve: taskResolvers.Query.getTaskByTaskId,
     },
     tasks: {
       type: new GraphQLList(TaskType),

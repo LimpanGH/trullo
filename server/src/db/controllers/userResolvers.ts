@@ -1,8 +1,8 @@
 console.log('Reading userResolvers.ts');
 
-import { UserModel } from '../models/userModels';
-import { TaskModel } from '../models/taskModels';
 import bcrypt from 'bcrypt';
+import { TaskModel } from '../models/taskModels';
+import { UserModel } from '../models/userModels';
 // import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -56,7 +56,8 @@ const userResolvers = {
       return UserModel.find({});
     },
 
-    task: (_: any, args: TaskArgs, context: Context) => {
+    //! how to do this one, get by user id or task id?
+    getTaskByUserId: (_: any, args: TaskArgs, context: Context) => {
       if (!context.user) {
         throw new Error('Unauthorized, please add a valid token in the Authorization header');
       }

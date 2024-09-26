@@ -45,8 +45,8 @@ app.use(
     return {
       schema: schema,
       graphiql: true,
-      // context: { user: decodedToken || null}, // Pass the decoded token to the context
-      context: { user: decodedToken}, // Pass the decoded token to the context
+      // context: { user: decodedToken || null},
+      context: { user: decodedToken },
     };
   })
 );

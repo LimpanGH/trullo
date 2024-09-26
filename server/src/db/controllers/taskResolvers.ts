@@ -17,7 +17,7 @@ interface Context {
 
 export const taskResolvers = {
   Query: {
-    task: (_: any, args: TaskArgs, context: Context) => {
+    getTaskByTaskId: (_: any, args: TaskArgs, context: Context) => {
       if (!context.user) {
         throw new Error('Unauthorized');
       }
@@ -31,11 +31,11 @@ export const taskResolvers = {
     },
   },
   Mutation: {
-    addTask: async (_: any, context: Context, args: { [key: string]: any }) => {
+    addTask: async (_: any,  args: { [key: string]: any }, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
 
       if (!context.user) {
-        throw new Error('Unauthorized');
+        'Unauthorized to delete user. Please add a valid token in the Authorization header'
       }
       const task = new TaskModel({
         title: args.title,
@@ -46,7 +46,7 @@ export const taskResolvers = {
       });
       return task.save();
     },
-    deleteTask: async (_: any, context: Context, args: { [key: string]: any }) => {
+    deleteTask: async (_: any, args: { [key: string]: any }, context: Context) => {
       if (!context.user) {
         throw new Error('Unauthorized');
       }
