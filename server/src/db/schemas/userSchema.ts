@@ -4,6 +4,7 @@ import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID
 import { UserModel, TaskModel } from '../models/userModels';
 import { TaskType } from './taskSchema';
 import userResolvers from '../controllers/userResolvers';
+import { title } from 'process';
 
 export const UserType = new GraphQLObjectType({
   name: 'User',
@@ -52,7 +53,7 @@ export const RootQuery = new GraphQLObjectType({
       resolve: userResolvers.Query.getAllUsers,
     },
     getTaskByUserId: {
-      type: TaskType,
+      type: new GraphQLList(TaskType),
       args: {
         id: { type: GraphQLID },
       },

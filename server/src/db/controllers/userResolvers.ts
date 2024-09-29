@@ -3,7 +3,8 @@ console.log('Reading userResolvers.ts');
 import bcrypt from 'bcrypt';
 import { TaskModel } from '../models/taskModels';
 import { UserModel } from '../models/userModels';
-import {checkAuth} from '../helpers/authHelpers'
+import { checkAuth } from '../helpers/authHelpers';
+import mongoose from 'mongoose';
 // import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -34,32 +35,40 @@ interface Context {
 
 const userResolvers = {
   Query: {
-    getUserById: (_: any, args: UserArgs, context: Context) => {
+    getUserById: async (_: any, args: UserArgs, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
       checkAuth(context);
-
       if (!args.id) {
         throw new Error('User ID is required');
       }
-
-      return UserModel.findById(args.id);
+      const user = await UserModel.findById(args.id);
+      if (!user) {
+        throw new Error('No user with that ID in the database');
+      }
+      return user;
     },
 
-    getAllUsers: (_: any, args: UserArgs, context: Context) => {
-      console.log('Context user:', context.user); // Log the context user
+    getAllUsers: async (_: any, args: UserArgs, context: Context) => {
+      console.log('Context user:', context.user);
+      checkAuth(context);
+      const users = await UserModel.find({});
+      if (users.length === 0) {
+        throw new Error('No users found in the database');
+      }
+      return users;
+    },
 
+    getTaskByUserId: async (_: any, args: TaskArgs, context: Context) => {
       checkAuth(context);
 
-      return UserModel.find({});
-    },
-
-    //! how to do this one, get by user id or task id?
-    getTaskByUserId: (_: any, args: TaskArgs, context: Context) => {
-    //  checkAuth(context);
-      if (!context.user) {
-        throw new Error('Unauthorized, please add a valid token in the Authorization header');
+      if (!args.id) {
+        throw new Error('Task ID is required');
       }
-      return TaskModel.findById(args.id);
+      const tasks = await TaskModel.find({ assignedTo: args.id });
+      if (!tasks || tasks.length === 0) {
+        throw new Error(`No tasks found for user with ID:' ${args.id}`);
+      }
+      return tasks;
     },
   },
 
@@ -80,29 +89,28 @@ const userResolvers = {
       if (!valid) {
         throw new Error('Incorrect password');
       }
-
-      const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
-
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '3h' });
       console.log('Users token is:', token);
       return { token, user };
     },
 
-    addUser: async (_: any, args: { [key: string]: any }) => {
+    addUser: async (_: any, args: { [key: string]: any }, context: Context) => {
       const { name, email, password } = args as AddUserArgs;
-
-      // Manual validation
+      if (!context.user) {
+        throw new Error(
+          'Unauthorized to add user. Please add a valid token in the Authorization header'
+        );
+      }
       if (!email || email.trim() === '') {
         throw new Error('Email cannot be empty');
       }
       if (!password || password.trim() === '') {
         throw new Error('Password cannot be empty');
       }
-
       const existingUser = await UserModel.findOne({ email });
       if (existingUser) {
         throw new Error('User with this email already exists');
       }
-
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(args.password, saltRounds);
       const user = new UserModel({
@@ -113,24 +121,26 @@ const userResolvers = {
       console.log('New user added', { name: args.name, email: args.email });
       return user.save();
     },
-
     deleteUser: async (_: any, args: { [key: string]: any }, context: Context) => {
-      const { id } = args as UserArgs; // Cast args to UserArgs
-      console.log('Context user:', context.user); // Log the context user
-
-      if (!context.user) {
-        throw new Error(
-          'Unauthorized to delete user. Please add a valid token in the Authorization header'
-        );
+      const { id } = args as UserArgs;
+      console.log('Context user:', context.user);
+      checkAuth(context);
+      if (!id) {
+        throw new Error('User ID is required.');
       }
-
-      const deletedUser = await UserModel.findByIdAndDelete(args.id);
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new Error(`Invalid ID format: ${id}`);
+      }
+      const deletedUser = await UserModel.findByIdAndDelete(id);
       if (!deletedUser) {
-        console.log('There is no user with ID:', args.id);
-        throw new Error(`User with ID ${args.id} not found`);
+        console.log('There is no user with ID:', id);
+        throw new Error(`User with ID ${id} not found`);
       }
-
-      console.log('User deleted:', { id: args.id, name: args.name, email: args.email });
+      console.log('User deleted:', {
+        id: deletedUser.id,
+        name: deletedUser.name,
+        email: deletedUser.email,
+      });
       return deletedUser;
     },
 
@@ -146,6 +156,7 @@ const userResolvers = {
       }
 
       const deletedUsers = [];
+
       for (const id of args.ids) {
         const userToDelete = await UserModel.findById(id);
         if (!userToDelete) {

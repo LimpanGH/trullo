@@ -1,7 +1,6 @@
+console.log('Reading taskSchema.ts');
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import { TaskModel } from '../models/taskModels.js';
 import { taskResolvers } from '../controllers/taskResolvers.js';
-// import { title } from 'process';
 export const TaskType = new GraphQLObjectType({
     name: 'Task',
     fields: () => ({
@@ -17,27 +16,29 @@ export const TaskType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        task: {
+        getTaskByTaskId: {
             type: TaskType,
             args: {
-            // id: { type: GraphQLID },
-            // title: { type: GraphQLString },
-            // description: { type: GraphQLString },
-            // status: { type: GraphQLString },
-            // assignedTo: { type: GraphQLString },
-            // createdAt: { type: GraphQLString },
-            // finishedBy: { type: GraphQLString },
+                id: { type: GraphQLID },
+                // title: { type: GraphQLString },
+                // description: { type: GraphQLString },
+                // status: { type: GraphQLString },
+                // assignedTo: { type: GraphQLString },
+                // createdAt: { type: GraphQLString },
+                // finishedBy: { type: GraphQLString },
             },
-            resolve: taskResolvers.Query.task,
+            resolve: taskResolvers.Query.getTaskByTaskId,
         },
-        tasks: {
+        getAllTasks: {
+            type: new GraphQLList(TaskType),
+            resolve: taskResolvers.Query.getAllTasks,
+        },
+        getTasksAssignedToUserId: {
             type: new GraphQLList(TaskType),
             args: {
                 assignedTo: { type: GraphQLID },
             },
-            resolve(parent, args) {
-                return TaskModel.find(args.assignedTo ? { assignedTo: args.assignedTo } : {});
-            },
+            resolve: taskResolvers.Query.getTasksAssignedToUserId,
         },
     },
 });
@@ -50,9 +51,18 @@ const Mutation = new GraphQLObjectType({
                 title: { type: GraphQLString },
                 description: { type: GraphQLString },
                 status: { type: GraphQLString },
-                assignedTo: { type: GraphQLID },
             },
             resolve: taskResolvers.Mutation.addTask,
+        },
+        addTaskToUserId: {
+            type: TaskType,
+            args: {
+                title: { type: GraphQLString },
+                description: { type: GraphQLString },
+                status: { type: GraphQLString },
+                assignedTo: { type: GraphQLID },
+            },
+            resolve: taskResolvers.Mutation.addTaskToUserId,
         },
         deleteTask: {
             type: TaskType,
@@ -60,7 +70,7 @@ const Mutation = new GraphQLObjectType({
                 id: { type: GraphQLID },
             },
             resolve: taskResolvers.Mutation.deleteTask,
-        }
+        },
     },
 });
 export const schemaTask = new GraphQLSchema({

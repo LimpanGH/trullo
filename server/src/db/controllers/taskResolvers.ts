@@ -1,14 +1,11 @@
 console.log('Reading taskResolvers.ts');
 
-// import { UserModel } from '../models/userModels';
 import { TaskModel } from '../models/taskModels';
 import { checkAuth } from '../helpers/authHelpers';
-import { TaskType } from '../schemas/taskSchema';
 
 interface TaskArgs {
   id?: string;
 }
-
 interface AddTaskArgs {
   id: string;
 }
@@ -37,13 +34,10 @@ export const taskResolvers = {
 
     getAllTasks: async (_: any, args: TaskArgs, context: Context) => {
       checkAuth(context);
-
       const tasks = await TaskModel.find({});
-
       if (tasks.length === 0) {
         throw new Error('No tasks found in the database');
       }
-
       return TaskModel.find({});
     },
 
@@ -60,7 +54,6 @@ export const taskResolvers = {
     },
   },
   Mutation: {
-
     addTask: async (_: any, args: { [key: string]: any }, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
       checkAuth(context);
@@ -72,9 +65,8 @@ export const taskResolvers = {
       });
       return task.save();
     },
-
     addTaskToUserId: async (_: any, args: { [key: string]: any }, context: Context) => {
-      console.log('Context user:', context.user); // Log the context user
+      console.log('Context user:', context.user);
       checkAuth(context);
       if (!args.id) {
         throw new Error('User ID is required');
@@ -90,14 +82,12 @@ export const taskResolvers = {
     },
 
     deleteTask: async (_: any, args: { [key: string]: any }, context: Context) => {
-     checkAuth(context);
-
+      checkAuth(context);
       const taskToDelete = await TaskModel.findById(args.id);
       if (!taskToDelete) {
         throw new Error(`Task with ID ${args.id} not found`);
       }
-
-      const { id } = args as AddTaskArgs; // Cast args to AddTaskArgs
+      const { id } = args as AddTaskArgs;
       const deletedTask = await TaskModel.findByIdAndDelete(args.id);
       return deletedTask;
     },

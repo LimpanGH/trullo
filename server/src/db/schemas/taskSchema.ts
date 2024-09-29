@@ -1,9 +1,7 @@
 console.log('Reading taskSchema.ts');
 
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, GraphQLList, GraphQLID } from 'graphql';
-import { TaskModel } from '../models/taskModels';
 import { taskResolvers } from '../controllers/taskResolvers';
-// import { title } from 'process';
 
 export const TaskType = new GraphQLObjectType({
   name: 'Task',
@@ -34,12 +32,10 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve: taskResolvers.Query.getTaskByTaskId,
     },
-
     getAllTasks: {
       type: new GraphQLList(TaskType),
       resolve: taskResolvers.Query.getAllTasks,
     },
-
     getTasksAssignedToUserId: {
       type: new GraphQLList(TaskType),
       args: {
@@ -53,8 +49,6 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-
-
     addTask: {
       type: TaskType,
       args: {
@@ -64,7 +58,6 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: taskResolvers.Mutation.addTask,
     },
-
     addTaskToUserId: {
       type: TaskType,
       args: {
@@ -75,7 +68,6 @@ const Mutation = new GraphQLObjectType({
       },
       resolve: taskResolvers.Mutation.addTaskToUserId,
     },
-
     deleteTask: {
       type: TaskType,
       args: {
