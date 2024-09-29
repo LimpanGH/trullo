@@ -1,4 +1,4 @@
-import {replaceInFile} from 'replace-in-file'
+import { replaceInFile } from 'replace-in-file';
 const options = {
   files: 'dist/**/*.js',
   from: /from\s+['"](\..*?)['"]/g,
@@ -11,10 +11,12 @@ const options = {
   },
 };
 replaceInFile(options)
-  .then(results => {
-    console.log('Import paths updated:', results.filter(r => 
-r.hasChanged).map(r => r.file));
+  .then((results) => {
+    console.log(
+      'Import paths updated:',
+      results.filter((r) => r.hasChanged).map((r) => r.file)
+    );
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('Error occurred while updating import paths:', error);
   });

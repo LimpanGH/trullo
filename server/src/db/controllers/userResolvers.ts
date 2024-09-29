@@ -5,7 +5,6 @@ import { TaskModel } from '../models/taskModels';
 import { UserModel } from '../models/userModels';
 import { checkAuth } from '../helpers/authHelpers';
 import mongoose from 'mongoose';
-// import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;

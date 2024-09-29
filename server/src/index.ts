@@ -1,8 +1,6 @@
 console.log('Reading index.ts');
 
 import express from 'express';
-import { Request, Response, NextFunction } from 'express';
-
 import * as dotenv from 'dotenv';
 import { connectToDB } from './db/dbConnect';
 import { graphqlHTTP } from 'express-graphql';
@@ -21,12 +19,10 @@ app.use(express.json());
 if (!mongodbUri) {
   throw new Error('MONGODB_URI is not defined in the environment variables.');
 }
-if(!process.env.JWT_SECRET_KEY) {
+if (!process.env.JWT_SECRET_KEY) {
   throw new Error('JWT_SECRET_KEY is not defined in the environment variables.');
-} 
-
+}
 connectToDB(mongodbUri);
-
 const schema = mergeSchemas({
   schemas: [schemaUser, schemaTask],
 });
@@ -35,7 +31,6 @@ app.use(
   '/graphql',
   graphqlHTTP((req, res) => {
     const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
-
     let decodedToken = null;
     if (token) {
       try {
@@ -44,7 +39,6 @@ app.use(
         console.log('Invalid or expired token');
       }
     }
-
     return {
       schema: schema,
       graphiql: true,

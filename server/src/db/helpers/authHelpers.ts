@@ -1,6 +1,6 @@
 interface Context {
-    user?: string | null;
-  }
+  user?: string | null;
+}
 
 export const checkAuth = (context: Context) => {
   if (!context.user) {
