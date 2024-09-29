@@ -3,6 +3,7 @@ console.log('Reading userResolvers.ts');
 import bcrypt from 'bcrypt';
 import { TaskModel } from '../models/taskModels';
 import { UserModel } from '../models/userModels';
+import {checkAuth} from '../helpers/authHelpers'
 // import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -35,9 +36,7 @@ const userResolvers = {
   Query: {
     getUserById: (_: any, args: UserArgs, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
-      if (!context.user) {
-        throw new Error('Unauthorized, please add a valid token in the Authorization header');
-      }
+      checkAuth(context);
 
       if (!args.id) {
         throw new Error('User ID is required');
@@ -49,15 +48,14 @@ const userResolvers = {
     getAllUsers: (_: any, args: UserArgs, context: Context) => {
       console.log('Context user:', context.user); // Log the context user
 
-      if (!context.user) {
-        throw new Error('Unauthorized, please add a valid token in the Authorization header');
-      }
+      checkAuth(context);
 
       return UserModel.find({});
     },
 
     //! how to do this one, get by user id or task id?
     getTaskByUserId: (_: any, args: TaskArgs, context: Context) => {
+    //  checkAuth(context);
       if (!context.user) {
         throw new Error('Unauthorized, please add a valid token in the Authorization header');
       }

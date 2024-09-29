@@ -24,7 +24,7 @@ const RootQuery = new GraphQLObjectType({
     getTaskByTaskId: {
       type: TaskType,
       args: {
-        // id: { type: GraphQLID },
+        id: { type: GraphQLID },
         // title: { type: GraphQLString },
         // description: { type: GraphQLString },
         // status: { type: GraphQLString },
@@ -34,22 +34,38 @@ const RootQuery = new GraphQLObjectType({
       },
       resolve: taskResolvers.Query.getTaskByTaskId,
     },
-    tasks: {
+
+    getAllTasks: {
+      type: new GraphQLList(TaskType),
+      resolve: taskResolvers.Query.getAllTasks,
+    },
+
+    getTasksAssignedToUserId: {
       type: new GraphQLList(TaskType),
       args: {
         assignedTo: { type: GraphQLID },
       },
-      resolve(parent, args) {
-        return TaskModel.find(args.assignedTo ? { assignedTo: args.assignedTo } : {});
-      },
+      resolve: taskResolvers.Query.getTasksAssignedToUserId,
     },
   },
 });
 
- const Mutation = new GraphQLObjectType({
+const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
+
+
     addTask: {
+      type: TaskType,
+      args: {
+        title: { type: GraphQLString },
+        description: { type: GraphQLString },
+        status: { type: GraphQLString },
+      },
+      resolve: taskResolvers.Mutation.addTask,
+    },
+
+    addTaskToUserId: {
       type: TaskType,
       args: {
         title: { type: GraphQLString },
@@ -57,15 +73,16 @@ const RootQuery = new GraphQLObjectType({
         status: { type: GraphQLString },
         assignedTo: { type: GraphQLID },
       },
-      resolve: taskResolvers.Mutation.addTask,
+      resolve: taskResolvers.Mutation.addTaskToUserId,
     },
+
     deleteTask: {
       type: TaskType,
       args: {
         id: { type: GraphQLID },
       },
       resolve: taskResolvers.Mutation.deleteTask,
-    }
+    },
   },
 });
 

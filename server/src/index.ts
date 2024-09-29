@@ -21,6 +21,9 @@ app.use(express.json());
 if (!mongodbUri) {
   throw new Error('MONGODB_URI is not defined in the environment variables.');
 }
+if(!process.env.JWT_SECRET_KEY) {
+  throw new Error('JWT_SECRET_KEY is not defined in the environment variables.');
+} 
 
 connectToDB(mongodbUri);
 
@@ -51,6 +54,6 @@ app.use(
   })
 );
 
-app.listen(4000, () => {
+app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });
