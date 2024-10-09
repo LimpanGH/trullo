@@ -68,7 +68,7 @@ export const taskResolvers = {
     addTaskToUserId: async (_: any, args: { [key: string]: any }, context: Context) => {
       console.log('Context user:', context.user);
       checkAuth(context);
-      if (!args.id) {
+      if (!args.assignedTo) {
         throw new Error('User ID is required');
       }
       const task = new TaskModel({
